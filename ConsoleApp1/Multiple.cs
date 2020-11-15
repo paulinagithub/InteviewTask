@@ -6,35 +6,23 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-
-    /*
- *
-Napisz program, który wypisuje liczby od 1 do 100. Ale dla wielokrotności trójki wyświetl "Fizz" zamiast
-liczby oraz dla wielokrotności piątki wyświetl "Buzz". Dla liczb będących wielokrotnościami trójki oraz
-piątki wyświetl "FizzBuzz".
-
-*/
     public class Multiple
-    {
+    {       
         public void CheckMultiple()
         {
             for (int i = 1; i < 100; i++)
             {
-
-                if(IsDivisible(i,3))
+                if(IsDivisibleByThree(i) && IsDivisibleByFive(i))
                 {
-                    if(IsDivisibleByFive(i))
-                    {
-                        Console.WriteLine("FizzBuzz");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Fizz");
-                    }
+                    Console.WriteLine("FizzBuzz");                   
                 }
                 else if(IsDivisibleByFive(i))
                 {
                     Console.WriteLine("Buzz");                  
+                }
+                else if (IsDivisibleByThree(i))
+                {
+                    Console.WriteLine("Fizz");
                 }
                 else
                 {
@@ -43,18 +31,13 @@ piątki wyświetl "FizzBuzz".
             }
         }
 
-        public bool IsDivisible(int number, int divisibleNumber)
-        {
-            return (number % divisibleNumber) == 0;
-        }
-        public bool IsDivisibleByThree(int number)
+        private bool IsDivisibleByThree(int number)
         {
             return (number % 3) == 0;
         }
-        public bool IsDivisibleByFive(int number)
+        private bool IsDivisibleByFive(int number)
         {
             return (number % 5) == 0;
         }
     }
-
 }

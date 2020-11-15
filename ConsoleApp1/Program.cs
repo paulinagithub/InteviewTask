@@ -13,14 +13,14 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             //Multiple multiple = new Multiple();
-            //Data date = new Data();
+            //Date date = new Date();
 
             //multiple.CheckMultiple();
-            //var c  = date.DateValidation(12,2, 2002);
+            //var c = date.DateValidation(30, 13, 2001);
 
             EanCode eancs = new EanCode();
 
-            var c  = eancs.CheckBarCode("075678180", 1);
+            var c  = eancs.CheckBarCode("75678182323", 4);
 
             //Game game = new Game();
             //game.RunGame();

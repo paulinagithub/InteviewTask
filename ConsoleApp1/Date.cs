@@ -6,14 +6,6 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    /*
-     * Napisz funkcję sprawdzającą poprawność daty w latach 2001-2099 (daty spoza tego okresu uznaj za
-niepoprawne).
-Wejście – trzy parametry liczbowe (dzień, miesiąc, rok).
-Wyjście – parametr logiczny (true – data poprawna, false – data niepoprawna) .
-Proszę zaimplementować własny algorytm kontroli – nie wolno korzystać z gotowych rozwiązań, np.
-LocalDate, Calendar, itp.
-    */
     class Date
     {
         public const int MaxYear = 2099;
@@ -22,54 +14,57 @@ LocalDate, Calendar, itp.
         public const int MinMonth = 1;
         public const int MaxDay = 31;
         public const int MinDay = 1;
+        public const int February = 2;
+        public const int April = 4;
+        public const int June = 6;
+        public const int October = 8;
+        public const int November = 11;
+
         public bool DateValidation(int day, int month, int year)
         {
-            if (CheckIfYearIsVaild(year) || CheckIfMonthIsValid(month) || CheckIfDayIsValid(day))
+            if (CheckIfYearIsInRange(year) || 
+                CheckIfMonthIsInRange(month) || 
+                CheckIfDayIsInRange(day) || 
+                !CheckIfNumberOfDaysInMonthIsCorrect(day, month, year)
+                )
                 return false;
-  
-            if (month == 2)
-            {
-                if (!HandleNumberOfDaysInFebruary(day, year))
-                    return false;
-            }
-            else if (month == 4 || month == 6 || month == 9 || month == 11)
-                return HandleNumbersOfDaysLessThan30(day);
 
             return true;
         }
 
-        public bool HandleNumbersOfDaysLessThan30(int day)
+        private bool CheckIfNumberOfDaysInMonthIsCorrect(int day, int month, int year)
+        {
+            if (month == February)
+                return CheckNumberOfDaysInFebruary(day, year);
+
+            else if (month == April || month == June || month == October || month == November)
+                return CheckIfNumberOfDaysIsLessThan30(day);
+
+            return true;
+        }
+        private bool CheckIfNumberOfDaysIsLessThan30(int day)
         {
             return (day <= 30);
         }
-        public bool HandleNumberOfDaysInFebruary(int day,int year)
-        {          
-            if (CheckIfLeapYear(year))
-                return (day <= 29);
-            else
-                return (day <= 28);
+        private bool CheckNumberOfDaysInFebruary(int day,int year)
+        {
+            return CheckIfLeapYear(year) ? (day <= 29) : (day <= 28);
         }
-        public bool CheckIfYearIsVaild(int year)
+        private bool CheckIfYearIsInRange(int year)
         {
             return (year < MinYear || year > MaxYear);
         }
-        public bool CheckIfMonthIsValid(int month)
+        private bool CheckIfMonthIsInRange(int month)
         {
             return (month < MinMonth || month > MaxMonth);
         }
-        public bool CheckIfDayIsValid(int day)
+        private bool CheckIfDayIsInRange(int day)
         {
             return (day < MinDay || day > MaxDay);
         }
-        public bool CheckIfLeapYear(int year)
+        private bool CheckIfLeapYear(int year)
         {
-            return (((year % 4 == 0) &&
-                 (year % 100 != 0)) ||
-                 (year % 400 == 0));
+            return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
         }
     }
-
-
-
-
 }

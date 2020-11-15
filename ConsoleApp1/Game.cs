@@ -21,67 +21,65 @@ namespace ConsoleApp1
 
         public void RunGame()
         {
-            int firstGamerResult = 0;
-            int secondGamerResult = 0;
+            int firstPlayerResult = 0;
+            int secondPlayerResult = 0;
+
             for (int i = 0; i < 5; i++)
             {
-               firstGamerResult += StartThrowing();
-               secondGamerResult += StartThrowing();
+               firstPlayerResult += TurnScore();
+               secondPlayerResult += TurnScore();
             }
-            if(firstGamerResult < secondGamerResult)
+            if(firstPlayerResult < secondPlayerResult)
             {
                 Console.WriteLine("First player is a winner");
-                ShowResultOfGame(firstGamerResult, secondGamerResult);
             }
-            else if (secondGamerResult < firstGamerResult)
+            else if (secondPlayerResult < firstPlayerResult)
             {
                 Console.WriteLine("Second player is a winner");
-                ShowResultOfGame(firstGamerResult, secondGamerResult);
             }
             else
             {
-                Console.WriteLine("No one is a winner");
-                ShowResultOfGame(firstGamerResult, secondGamerResult);
+                Console.WriteLine("It is a tie");
             }
+            ShowResultOfGame(firstPlayerResult, secondPlayerResult);
         }
-        public void ShowResultOfGame(int firstGamerResult, int secondGamerResult)
+
+        private void ShowResultOfGame(int firstGamerResult, int secondGamerResult)
         {
             Console.WriteLine($"First Gamer Sum point:{firstGamerResult}");
             Console.WriteLine($"Second Gamer Sum point:{secondGamerResult}");
         }
-        public int StartThrowing()
+        private int TurnScore()
         {
             var sumOfPoint = 0;
-            for (int i = 1; i < 11; i++)
+            for (int rollNumber = 1; rollNumber < 11; rollNumber++)
             {
-                int firstThrow = RandomNumber();
-                int secondThrow = RandomNumber();
-                int sumOfThrows = SumOfThrows(firstThrow, secondThrow);
+                int firstRoll = RandomNumber();
+                int secondRoll = RandomNumber();
+                int sumOfDice = firstRoll + secondRoll;
                            
-                if(sumOfThrows == 5)
+                if(sumOfDice == 5)
                 {
                     return sumOfPoint;
                 }
-                else if (i == 1)
+
+                if (rollNumber == 1)
                 {
-                    if (sumOfThrows == 7 || sumOfThrows == 11)
+                    if (sumOfDice == 7 || sumOfDice == 11)
                     {
                         return sumOfPoint;
                     }
-                    else if (sumOfThrows == 2 || sumOfThrows == 12)
+                    
+                    if (sumOfDice == 2 || sumOfDice == 12)
                     {
                         return WorstRoundPoints;
                     }
-                }              
-                sumOfPoint += sumOfThrows / i;                        
+                }                
+                sumOfPoint += sumOfDice / rollNumber;                        
             }
             return sumOfPoint;
         }
-        public int SumOfThrows(int firstThrow, int secondThrow)
-        {
-            return firstThrow + secondThrow;
-        }
-        public int RandomNumber()
+        private int RandomNumber()
         {
             return _random.Next(1, 6);
         }

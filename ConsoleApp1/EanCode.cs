@@ -7,106 +7,70 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    /*
-     * Celem zadania jest napisanie funkcji sprawdzającej, czy podany tekst jest kodem kreskowym EAN-13
-lub EAN-8.
-Na wejściu funkcji są dwa parametry:
-- wejściowy kod kreskowy: parametr tekstowy
-- rodzaj kodu kreskowego - parametr numeryczny: 1 dla EAN-8, 2 dla EAN-13.
-Niektóre towary (np. czasopisma) mają dodatkowe kody (tzw. add-on'y) - należy mieć na uwadze, że
-skaner może dokleić je bezpośrednio do właściwego kodu kreskowego (np. dla towaru o kodzie
-"6920702707721" oraz add-on’ie "12" na wejściu możliwy jest ciąg "692070270772112"). Należy
-założyć, że add-on'y mogą występować zarówno dla kodów EAN-8 jaki i EAN-13.
-Należy mieć na uwadze, że niektóre skanery kodów kreskowych mogą wycinać z kodu kreskowego
-pierwsze wiodące zero (np. zamiast kodu "0075678164125" przesyłają "075678164125").
-Na wyjściu funkcja powinna zwracać prawidłowy kod kreskowy (o długości 8 lub 13 znaków) bez
-ewentualnego add-on'u.
-Ewentualne błędy w danych wejściowych powinny być sygnalizowane wyjątkami.
-    */
     class EanCode
     {
         public string CheckBarCode(string barCode, int eanType)
         {
-            string vaildBarCode = null;
-
-            int barCodeLenght = barCode.Length;
             switch(eanType)
             {
                 case 1:
-                    vaildBarCode = CheckIfBarCode8IsValid(barCodeLenght, barCode);
-                    break;
+                    return ExtractBarCode8(barCode);
                 case 2:
-                    vaildBarCode = CheckIfBarCode13IsValid(barCodeLenght, barCode);
-                    break;
+                    return ExtractBarCode13( barCode);
                 default:
-                    throw new Exception(String.Format("Unknown ean type: {0}", eanType));
+                    throw new EanCodeTypeNotFound(eanType);
             }
-            return vaildBarCode;
         }
-        public string ChangeEan8Code(string validEanCode, int eanLenght)
+        private string ExtractBarCode8(string barCode)
         {
-            string correctEan = "";
-            if(eanLenght == 9 || eanLenght == 10)
-            {
-                correctEan = RemoveCharsFromString(validEanCode, 2);
-
-            } else if (eanLenght == 12 || eanLenght == 13)
-            {
-                correctEan = RemoveCharsFromString(validEanCode, 5);
-            }
-            return correctEan;
-        }
-        public string ChangeEan13Code(string validEanCode, int eanLenght)
-        {
-            string correctEan = "";
-            if (eanLenght == 14 || eanLenght == 15)
-            {
-                correctEan = RemoveCharsFromString(validEanCode, 2);
-
-            }
-            else if (eanLenght == 17 || eanLenght == 18)
-            {
-                correctEan = RemoveCharsFromString(validEanCode, 5);
-            }
-            return correctEan;
-        }
-        private string RemoveCharsFromString(string eanCode, int numberCharToRemove)
-        {
-            return eanCode.Substring(0, eanCode.Length - numberCharToRemove);
-        }
-        public string CheckIfBarCode8IsValid(int barCodeLenght, string barCode)
-        {
-            Regex EAN8 = new Regex(@"\b(?:\d{7,10}|\d{12,13})\b");
+            Regex EAN8 = new Regex(@"^(\d{7}|\d{8})(\d{2}|\d{5})?$");
            
             Match m8 = EAN8.Match(barCode);
 
             if(m8.Success)
             {
-                barCode = ChangeEan8Code(barCode, barCodeLenght);
+                var ean = m8.Groups[1].ToString();
+                return ean.PadLeft(8, '0');
             }
             else
             {
-                throw new Exception(String.Format("EAN Code incorrect: {0}", barCode));
+                throw new InvalidEanCodeException(barCode);
             }
-
-            return barCode;
         }
 
-        public string CheckIfBarCode13IsValid(int barCodeLenght, string barCode)
+        private string ExtractBarCode13(string barCode)
         {
-            Regex EAN8 = new Regex(@"\b(?:\d{12,15}|\d{17,18})\b");
+            Regex EAN13 = new Regex(@"^(\d{12}|\d{13})(\d{2}|\d{5})?$");
 
-            Match m8 = EAN8.Match(barCode);
-            if (m8.Success)
+            Match m13 = EAN13.Match(barCode);
+            if (m13.Success)
             {
-                barCode = ChangeEan8Code(barCode, barCodeLenght);
+                var ean = m13.Groups[1].ToString();
+                return ean.PadLeft(13, '0');
             }
             else
             {
-                throw new Exception(String.Format("EAN Code incorrect: {0}", barCode));
+                throw new InvalidEanCodeException(barCode);
             }
+        }
+    }
 
-            return barCode;
+    [Serializable]
+    class InvalidEanCodeException : Exception
+    {
+        public InvalidEanCodeException(string eanCode)
+            : base(String.Format($"Invalid Ean Code: {eanCode}"))
+        {
+
+        }
+    }
+    [Serializable]
+    class EanCodeTypeNotFound : Exception
+    {
+        public EanCodeTypeNotFound(int eanType)
+            : base(String.Format($"Ean Type not found: {eanType}"))
+        {
+
         }
     }
 }
